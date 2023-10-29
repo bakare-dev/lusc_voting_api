@@ -1,0 +1,30 @@
+const VoteService = require("../services/VoteService");
+const VoterService = require("../services/VoterService");
+const NomineeService = require("../services/NomineeService");
+const CategoryService = require("../services/CategoryService");
+const Helper = require("../utils/Helper");
+
+let instance;
+
+class ElectionController {
+
+    #voteService;
+    #voterService;
+    #nomineeService;
+    #categoryService;
+    #helper;
+
+    constructor() {
+        if (instance) return instance;
+
+        this.#voteService = new VoteService();
+        this.#voterService = new VoterService();
+        this.#categoryService = new CategoryService();
+        this.#nomineeService = new NomineeService();
+        this.#helper = new Helper();
+ 
+        instance = this;
+    }
+}
+
+module.exports = ElectionController;
