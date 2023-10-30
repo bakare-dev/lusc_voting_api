@@ -1,3 +1,4 @@
+const CategoryEntity = require("../entities/Category");
 const NomineeEntity = require("../entities/Nominee");
 const Helper = require("../utils/Helper");
 const Service = require("./Service");
@@ -23,6 +24,7 @@ class NomineeService extends Service {
             where: {
                 CategoryId: query.categoryId
             },
+            include: [ CategoryEntity ],
             order: [["createdAt", "DESC"]],
             ...this.#helper.paginate(query.page, query.size),
         });
@@ -36,7 +38,30 @@ class NomineeService extends Service {
         if (query.size && query.size != "undefined") {
             response.currentSize = query.size;
         } else {
-            response.currentSize = "20";
+            response.currentSize = "50";
+        }
+
+        return response;
+    }
+
+    getNominees = async (query) => {
+        let response;
+        response = await NomineeEntity.findAndCountAll({
+            order: [["createdAt", "DESC"]],
+            include: [ CategoryEntity ],
+            ...this.#helper.paginate(query.page, query.size),
+        });
+
+        if (query.page && query.page != "undefined") {
+            response.currentPage = query.page;
+        } else {
+            response.currentPage = "0";
+        }
+
+        if (query.size && query.size != "undefined") {
+            response.currentSize = query.size;
+        } else {
+            response.currentSize = "50";
         }
 
         return response;

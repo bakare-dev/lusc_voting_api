@@ -1,3 +1,5 @@
+const CategoryEntity = require("../entities/Category");
+const NomineeEntity = require("../entities/Nominee");
 const VoteEntity = require("../entities/Vote");
 const Service = require("./Service");
 
@@ -26,6 +28,32 @@ class VoteService extends Service {
         return await VoteEntity.count({
             where: {
                 CategoryId: categoryId
+            }
+        })
+    }
+
+    getVotesByCategory = async (categoryId) => {
+        return await VoteEntity.findAll({
+            where: {
+                CategoryId: categoryId
+            }
+        })
+    }
+
+    getVoterCategories = async (voterId) => {
+        return await VoteEntity.findAll({
+            where: {
+                VoterId: voterId
+            },
+            include: [ CategoryEntity, NomineeEntity ]
+        })
+    }
+
+    getVoteByCategoryAndVoter = async (query) => {
+        return await VoteEntity.findOne({
+            where: {
+                CategoryId: query.CategoryId,
+                VoterId: query.VoterId
             }
         })
     }

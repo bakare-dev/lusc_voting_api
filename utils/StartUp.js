@@ -1,5 +1,6 @@
 const Helper = require("./Helper");
 const CategoryService = require("../services/CategoryService");
+const NomineeService = require("../services/NomineeService");
 
 let instance;
 
@@ -7,12 +8,14 @@ class StartUp {
 
     #helper;
     #categoryService;
+    #nomineeService;
 
     constructor () {
         if (instance) return instance;
 
         this.#helper = new Helper();
         this.#categoryService = new CategoryService();
+        this.#nomineeService = new NomineeService();
 
         instance = this;
     }
@@ -46,6 +49,16 @@ class StartUp {
                 { category: "Fashion Designer of the Year" },
             ]
 
+            const nominees = [
+                { 
+                    firstName: "Okene",
+                    lastName: "Womzy", 
+                    matricNo: "20CD007562",
+                    emailAddress: "bakare.praise@lmu.edu.ng",
+                    pictureUrl: "http://locahost:8010"
+                }
+            ]
+
             for ( const category of categories ) {
                 const serviceResponse = await this.#categoryService.create(category);
 
@@ -53,6 +66,47 @@ class StartUp {
                     this.#helper.logError({message: "error occurred adding " + category.category});
                 } else {
                     this.#helper.logInfo(category.category + " added")
+                }
+            }
+
+            for ( const nominee of nominees ) {
+                const serviceResponse = await this.#nomineeService.create(nominee);
+
+                if (!serviceResponse.id) {
+                    this.#helper.logError({message: "error occurred adding " + nominee.matricNo});
+                } else {
+                    this.#helper.logInfo(nominee.matricNo + " added")
+                }
+            }
+
+            this.#helper.logInfo("done");
+        } catch (ex) {
+            this.#helper.logError(ex);
+            process.exit(1);
+        }
+    }
+
+    addNominee = async () => {
+        try {
+            const nominees = [
+                { 
+                    firstName: "Okene",
+                    lastName: "Womzy", 
+                    matricNo: "20CD007562",
+                    CategoryId: 1,
+                    emailAddress: "okene.womzy@lmu.edu.ng",
+                    pictureUrl: "http://locahost:8010"
+                }
+            ]
+
+            for ( const nominee of nominees ) {
+                const serviceResponse = await this.#nomineeService.create(nominee);
+
+                if (!serviceResponse.id) {
+                    console.log(serviceResponse)
+                    this.#helper.logError({message: "error occurred adding " + nominee.matricNo});
+                } else {
+                    this.#helper.logInfo(nominee.matricNo + " added")
                 }
             }
 

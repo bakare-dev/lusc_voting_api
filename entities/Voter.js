@@ -7,11 +7,17 @@ class Voter extends Model {};
 
 Voter.init(
     {
+        emailAddress: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         matricNo: {
             type: DataTypes.STRING,
             allowNull: false
         },
-
+        session: {
+            type: DataTypes.STRING,
+        }
     },
     {
         sequelize: db.getConnectionManager()

@@ -53,7 +53,7 @@ class Service {
       if (query.size && query.size != "undefined") {
         response.currentSize = query.size;
       } else {
-        response.currentSize = "20";
+        response.currentSize = "50";
       }
 
       return response;

@@ -14,9 +14,10 @@ main = () => {
         
         // const db = new DatabaseEngine();
 
-        // db.connect(() => {
+        // db.connect( async () => {
         //     let serverEngine = new Server(server.port);
-        //     startUp.addCategory()
+        //     await startUp.addCategory();
+        //     await startUp.addNominee(); 
         //     serverEngine.start();
         // });
     } catch (e) {

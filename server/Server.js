@@ -6,7 +6,8 @@ const Helper = require("../utils/Helper");
 
 /* routes */
 const mediaRoute = require("./routes/mediaRoute");
-const electionRoute = require("./routes/electionRoute")
+const electionRoute = require("./routes/electionRoute");
+const userRoute = require("./routes/userRoute");
 
 let instance;
 class Server {
@@ -30,6 +31,7 @@ class Server {
   #configure = () => {
     this.#app = express();
     this.#app.use(express.json({ limit: "50mb" }));
+    this.#app.set("view engine", "ejs");
 
     this.#app.use((req, res, next) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -41,7 +43,7 @@ class Server {
       res.setHeader("Access-Control-Allow-Credentials", "true");
 
       if (req.method === "OPTIONS") {
-        return res.sendStatus(200);
+        return res.sendStatus(200);x
       }
       next();
     });
@@ -49,8 +51,9 @@ class Server {
 
   #buildRoutes = () => {
 
-    this.#app.use("/media", mediaRoute);
-    this.#app.use("/election", electionRoute)
+    this.#app.use("/api/v1/media", mediaRoute);
+    this.#app.use("/api/v1/election", electionRoute);
+    this.#app.use("/api/v1/user", userRoute);
 
     this.#app.get("/health", (req, res) => {
       res.status(200).json({

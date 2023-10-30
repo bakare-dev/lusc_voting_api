@@ -13,7 +13,6 @@ class VoterService extends Service {
         instance = this;
     }
 
-
 }
 
 module.exports = VoterService;
