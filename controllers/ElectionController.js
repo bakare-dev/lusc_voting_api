@@ -52,12 +52,49 @@ class ElectionController {
         }
     }
 
+    addNominee = async (req, res) => {
+        try {
+            let isUserValid = await this.#nomineeService.getNomineeByMatriNo(req.body.matricNo);
+
+            if (isUserValid) {
+                res.status(400).json({status: 400, error: "nominee already exist with this matricno"});
+                return;
+            }
+            
+            isUserValid = await this.#nomineeService.getNomineeByEmail(req.body.emailAddress);
+            
+            if (isUserValid) {
+                res.status(400).json({status: 400, error: "nominee already exist with this email address"});
+                return;
+            }
+
+            const nominee = await this.#nomineeService.create(req.body);
+
+            if (!nominee.id) {
+                res.status(400).json({ status: 400, error: "internal server error"});
+                return;
+            }
+
+            res.status(200).json({ status: 200, message: "Good Luck on election"});
+        } catch (ex) {
+            this.#helper.logError(ex);
+            res.status(500).json({error: "internal server error", status: 500});
+        }
+    }
+
     addVote = async (req, res) => {
         try {
             const validation = await validate(req.body, this.#constraint.addVoteConstraint());
 
             if (validation) {
                 res.status(422).json(validation);
+                return;
+            }
+
+            const isNomineeInCategory = await this.#nomineeService.getNominee({id: req.body.NomineeId, categoryId: req.body.CategoryId});
+
+            if (!isNomineeInCategory) {
+                res.status(400).json({ error: "nominee category must be same with CategoryId passed" });
                 return;
             }
 
@@ -121,7 +158,11 @@ class ElectionController {
             for ( const candidate of nominees ) {
                 const nomineeVotes = await this.#voteService.getNomineeVotesCount(candidate.id);
 
-                const percentage = (nomineeVotes / totalVotes) * 100;
+                let percentage = (nomineeVotes / totalVotes) * 100;
+
+                if (isNaN(percentage)) {
+                  percentage = 0;
+                }
 
                 let nominee = {
                     firstName: candidate.firstName,
@@ -130,7 +171,7 @@ class ElectionController {
                     emailAddress: candidate.emailAddress,
                     pictureUrl: candidate.pictureUrl,
                     category: candidate.Category.category,
-                    percentage: percentage + " %"
+                    percentage: `${percentage} %`
                 }
 
                 results.push(nominee);
@@ -161,7 +202,11 @@ class ElectionController {
                 for ( const candidate of nominees ) {
                     const nomineeVotes = await this.#voteService.getNomineeVotesCount(candidate.id);
 
-                    const percentage = (nomineeVotes / totalVotes) * 100;
+                    let percentage = (nomineeVotes / totalVotes) * 100;
+
+                    if (isNaN(percentage)) {
+                      percentage = 0;
+                    }
 
                     let nominee = {
                         firstName: candidate.firstName,
@@ -170,7 +215,7 @@ class ElectionController {
                         emailAddress: candidate.emailAddress,
                         pictureUrl: candidate.pictureUrl,
                         category: candidate.Category.category,
-                        percentage: percentage + " %"
+                    	percentage: `${percentage} %`
                     }
 
                     nomineesResult.push(nominee);

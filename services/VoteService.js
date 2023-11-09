@@ -45,7 +45,7 @@ class VoteService extends Service {
             where: {
                 VoterId: voterId
             },
-            include: [ CategoryEntity, NomineeEntity ]
+            include: [ CategoryEntity ]
         })
     }
 

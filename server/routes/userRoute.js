@@ -5,6 +5,6 @@ const controller = new UserController();
 const auth = new AuthenticationService();
 
 router.post("/", controller.userRegistration);
-router.get("/vote/:key", controller.validationUser)
+router.get("/validate/:key", controller.validationUser)
 
 module.exports = router;

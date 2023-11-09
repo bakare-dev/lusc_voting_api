@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+      }
+
+      .file-upload-btn-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+
+      .file-upload-btn-wrapper .btn {
+        border: 2px solid gray;
+        color: gray;
+        background-color: white;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .file-upload-btn-wrapper input[type="file"] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+      }
+
+      .file-added {
+        background-color: #4caf50;
+        color: green;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+    <title>Skilled Award Nominees</title>
+  </head>
+  <body>
+    <div class="form">
+      <h1>Student Skilled Award Top Three Nominees Form</h1>
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" placeholder="First Name" required />
+
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" placeholder="Last Name" required />
+
+      <label for="nickname">Nickname:</label>
+      <input type="text" id="nickname" placeholder="nickname(IG handle)" />
+
+      <label for="emailAddress">Email Address:</label>
+      <input
+        type="email"
+        id="emailAddress"
+        placeholder="name@lmu.edu.ng"
+        required
+      />
+      <label for="matricNo">Matric No:</label>
+      <input type="text" id="matricNo" placeholder="10FF919212" required />
+
+      <div class="file-upload-btn-wrapper">
+        <button class="btn" onclick="uploadPicture()">Select Picture</button>
+        <input type="file" id="image" onchange="addImage()" />
+      </div>
+
+      <input type="hidden" id="categoryId" value="<%= id %>" />
+
+      <br />
+      <br />
+      <button type="button" onclick="submitForm()" id="submitButton" disabled>
+        Submit
+      </button>
+    </div>
+
+    <script>
+      let pictureUrl;
+
+      function addImage() {
+        const input = document.getElementById("image");
+        window.selectedFile = input.files[0];
+
+        if (!window.selectedFile) {
+          alert("Please select an image");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", window.selectedFile);
+
+        fetch("/api/v1/media", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            if (res.status != 200) {
+              alert(res.error);
+              return;
+            }
+
+            alert("Image uploaded successfully");
+            pictureUrl = res.url;
+            document.getElementById("submitButton").disabled = false;
+            document.getElementById("image").disabled = true;
+            document.querySelector(".btn").innerText = "Picture Added";
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Try again later");
+          });
+      }
+
+      function submitForm() {
+        const id = document.getElementById("categoryId").value;
+        const lastName = document.getElementById("lastName").value;
+        const nickname = document.getElementById("nickname").value;
+        const firstName = document.getElementById("firstName").value;
+        const emailAddress = document.getElementById("emailAddress").value;
+        const matricNo = document.getElementById("matricNo").value;
+        let body = {};
+
+        if (id != "") body.CategoryId = parseInt(id);
+        if (lastName != "") body.lastName = lastName;
+        if (firstName != "") body.firstName = firstName;
+        if (nickname != "") body.nickname = nickname;
+        if (emailAddress != "") body.emailAddress = emailAddress;
+        if (matricNo != "") body.matricNo = matricNo;
+
+        body.pictureUrl = pictureUrl;
+
+        fetch("/api/v1/election/nominee", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            if (res.status != 200) {
+              alert(res.error);
+              return;
+            }
+            alert(res.message);
+          })
+          .catch((error) => alert("Try again later"));
+      }
+    </script>
+  </body>
+</html>

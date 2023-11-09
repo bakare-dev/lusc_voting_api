@@ -66,6 +66,31 @@ class NomineeService extends Service {
 
         return response;
     }
+
+    getNominee = async (query) => {
+        return await NomineeEntity.findOne({
+            where: {
+                id: query.id,
+                CategoryId: query.categoryId
+            }
+        })
+    }
+
+    getNomineeByMatriNo = async (matricNo) => {
+        return await NomineeEntity.findOne({
+            where: {
+                matricNo: matricNo,
+            }
+        })
+    }
+
+    getNomineeByEmail = async (email) => {
+        return await NomineeEntity.findOne({
+            where: {
+                emailAddress: email,
+            }
+        })
+    }
 }
 
 module.exports = NomineeService;

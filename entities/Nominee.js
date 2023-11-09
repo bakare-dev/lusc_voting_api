@@ -27,6 +27,9 @@ Nominee.init(
         pictureUrl: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        nickname: {
+            type: DataTypes.STRING,
         }
 
     },

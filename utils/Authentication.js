@@ -40,7 +40,7 @@ class Authenticate {
 
     generateTokens = (userId, callback) => {
         let token = jwt.sign({ userId: userId }, security.jwt, {
-            expiresIn: '1h'
+            expiresIn: '48h'
         }); 
     
         callback(token)

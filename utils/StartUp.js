@@ -25,7 +25,7 @@ class StartUp {
             const categories = [
                 { category: "Leadership Award" },
                 { category: "Social Impact Award" },
-                { category: "Lecturer of the Year - CBSS" },
+                { category: "Lecturer of the Year - CBS" },
                 { category: "Lecturer of the Year - CPAS" },
                 { category: "Lecturer of the Year - COE" },
                 { category: "Lecturer of the Year - CAS" },

@@ -55,6 +55,11 @@ class Server {
     this.#app.use("/api/v1/election", electionRoute);
     this.#app.use("/api/v1/user", userRoute);
 
+    this.#app.get("/nominee/:id", (req, res) => {
+      const id = req.params.id;
+      res.render("form", { id });
+    })
+
     this.#app.get("/health", (req, res) => {
       res.status(200).json({
         message: "lusc skilled award server is running fine",

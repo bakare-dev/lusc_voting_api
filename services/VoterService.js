@@ -13,6 +13,22 @@ class VoterService extends Service {
         instance = this;
     }
 
+
+    getUserByMatricNo = async (matricno) => {
+        return await VoterEntity.findOne({
+            where: {
+                matricNo: matricno
+            }
+        })
+    }
+
+    getUserByEmailAddress = async (emailAddress) => {
+        return await VoterEntity.findOne({
+            where: {
+                emailAddress: emailAddress
+            }
+        })
+    }
 }
 
 module.exports = VoterService;

@@ -6,6 +6,7 @@ const AuthenticationService = require("../utils/Authentication");
 const Messenger = require("../utils/Messenger");
 const { server } = require("../config/main.settings");
 const VoteService = require("../services/VoteService");
+const CategoryService = require("../services/CategoryService");
 
 
 let instance;
@@ -18,6 +19,7 @@ class UserController {
     #auth;
     #messenger;
     #voteService;
+    #categoryService;
 
     constructor() {
         if (instance) return instance;
@@ -28,6 +30,7 @@ class UserController {
         this.#auth = new AuthenticationService();
         this.#messenger = new Messenger();
         this.#voteService = new VoteService();
+        this.#categoryService = new CategoryService();
  
         instance = this;
     }
@@ -38,6 +41,24 @@ class UserController {
 
             if (validation) {
                 res.status(422).json(validation);
+                return;
+            }
+
+            const pattern = /^[a-zA-Z0-9._%+-]+@lmu\.edu\.ng$/;
+
+            if (!pattern.test(req.body.emailAddress)) {
+                res.status(422).json({error: `not a valid email address`});
+                return;
+            }
+
+            let isUserAvailable = await this.#service.getUserByEmailAddress(req.body.emailAddress);
+
+            if (!isUserAvailable) {
+                isUserAvailable = await this.#service.getUserByMatricNo(req.body.matricNo);
+            }
+
+            if (isUserAvailable) {
+                res.status(400).json({error: `A voter with this email address or matriculation number already exists.`});
                 return;
             }
 
@@ -54,7 +75,7 @@ class UserController {
 
             await this.#service.update(user.id, { session: authResponse });
 
-            const url = server.domain + "/user/validate" + authResponse;
+            const url = server.domain + "/vote/" + authResponse;
 
             const emailPayload = {
                 to: user.emailAddress,
@@ -110,7 +131,7 @@ class UserController {
                         <h1>Registration Successful!</h1>
                         <p>Thank you for registering on our voting application. Your account is now active.</p>
                         <a class="button" href="${url}" target="_blank">Click here to vote</a>
-                        <p class="validity">This link is valid for 3 days from the date of registration.</p>
+                        <p class="validity">This voting link is valid until the voting period expires.</p>
                     </div>
                 </body>
                 </html>
@@ -119,7 +140,7 @@ class UserController {
 
             this.#messenger.mail(emailPayload);
         
-            res.status(200).json({message: `check your email(${user.emailAddress}) for voting link`});
+            res.status(200).json({message: `${user.emailAddress}, The voting link has been successfully sent to your mailbox. Please also check your spam/junk folder.`});
         } catch (ex) {
             this.#helper.logError(ex);
             res.status(500).json({error: "internal server error"});
@@ -128,6 +149,14 @@ class UserController {
 
     validationUser = async (req, res) => {
         try {
+            const reqDate = new Date();
+            const expiresIn = new Date("2024-08-22T23:59:59");
+
+            if (reqDate > expiresIn) {
+                res.status(422).json({error: "voting closed"});
+                return;
+            }
+
             const validation = await validate(req.params, this.#constriant.userValidationConstraint());
 
             if (validation) {
@@ -138,20 +167,33 @@ class UserController {
             const isTokenValid = await this.#auth.authenticateJWT(req.params.key);
 
             if (!isTokenValid.isAuth) {
-                res.status(401).json({error: "expired token"});
+                res.status(401).json({error: "access forbidden"});
                 return;
             }
 
             let user = await this.#service.findById(isTokenValid.userId);
 
-            if (!user.id) {
+            if (!user) {
                 res.status(403).json({error: "access forbidden"});
                 return;
             }
 
-            const categories = await this.#voteService.getVoterCategories(user.id);
+            let categories = [];
 
-            user.categories = categories;
+            const votedCategories = await this.#voteService.getVoterCategories(user.id);
+
+            const categoriesResponse = await this.#categoryService.fetchAll({});
+
+            const allCategories = categoriesResponse.rows;
+
+            const votedCategoryIds = votedCategories.map(votedCategory => votedCategory.CategoryId);
+
+            categories = allCategories.filter(category => !votedCategoryIds.includes(category.id));
+
+            user = {
+                userId: user.id,
+                categories,
+            }
 
             res.status(200).json(user);
         } catch (ex) {
