@@ -3,7 +3,7 @@ module.exports = {
   server: {
     port: process.env.PORT,
     cron: process.env.CRON_JOB,
-    domain: "https://bakare.tech"
+    domain: "https://ssa.bakare.tech"
   },
   infrastructure: {
     dateFormat: "YYYY-MM-DD hh:mm:ss",

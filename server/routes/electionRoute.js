@@ -9,5 +9,6 @@ router.post("/nominee", controller.addNominee)
 router.get("/voter/vote/:voterId", controller.getVoterVotes);
 router.get("/vote/category/:categoryId", controller.getCategoryVotes);
 router.get("/result", controller.getWinners);
+router.post("/form/nominees", controller.sendNominationForm);
 
 module.exports = router;

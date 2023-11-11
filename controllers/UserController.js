@@ -150,7 +150,7 @@ class UserController {
     validationUser = async (req, res) => {
         try {
             const reqDate = new Date();
-            const expiresIn = new Date("2024-08-22T23:59:59");
+            const expiresIn = new Date("2023-11-17T00:00:00");
 
             if (reqDate > expiresIn) {
                 res.status(422).json({error: "voting closed"});

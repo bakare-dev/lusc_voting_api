@@ -19,8 +19,7 @@ class MediaController {
 
     upload = async (req, res) => {
         try {
-            const response = await this.#service.write(req.file.path);
-            res.status(200).json({url: response.Location, key: response.key, status: 200});
+            res.status(200).json({url: `https://sa.bakre.tech/static/${req.file.filename}`, status: 200});
         } catch (ex) {
             this.#helper.logError(ex);
             res.status(500).json({error: "internal server error", status: 500})

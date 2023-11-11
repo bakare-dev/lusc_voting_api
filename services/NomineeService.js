@@ -76,18 +76,20 @@ class NomineeService extends Service {
         })
     }
 
-    getNomineeByMatriNo = async (matricNo) => {
+    getNomineeByMatriNo = async (query) => {
         return await NomineeEntity.findOne({
             where: {
-                matricNo: matricNo,
+                matricNo: query.matricNo,
+                CategoryId: query.CategoryId
             }
         })
     }
 
-    getNomineeByEmail = async (email) => {
+    getNomineeByEmail = async (query) => {
         return await NomineeEntity.findOne({
             where: {
-                emailAddress: email,
+                emailAddress: query.email,
+                CategoryId: query.CategoryId
             }
         })
     }

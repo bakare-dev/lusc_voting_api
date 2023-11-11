@@ -5,6 +5,8 @@ const CategoryService = require("../services/CategoryService");
 const ElectionConstraint = require("../constraints/ElectionConstraint");
 const Helper = require("../utils/Helper");
 const validate = require("validate.js");
+const { server } = require("../config/main.settings");
+const Messenger = require("../utils/Messenger");
 
 let instance;
 
@@ -16,6 +18,7 @@ class ElectionController {
     #categoryService;
     #helper;
     #constraint;
+    #messenger;
 
     constructor() {
         if (instance) return instance;
@@ -26,6 +29,7 @@ class ElectionController {
         this.#nomineeService = new NomineeService();
         this.#helper = new Helper();
         this.#constraint = new ElectionConstraint();
+        this.#messenger = new Messenger();
  
         instance = this;
     }
@@ -54,14 +58,14 @@ class ElectionController {
 
     addNominee = async (req, res) => {
         try {
-            let isUserValid = await this.#nomineeService.getNomineeByMatriNo(req.body.matricNo);
+            let isUserValid = await this.#nomineeService.getNomineeByMatriNo(req.body);
 
             if (isUserValid) {
                 res.status(400).json({status: 400, error: "nominee already exist with this matricno"});
                 return;
             }
             
-            isUserValid = await this.#nomineeService.getNomineeByEmail(req.body.emailAddress);
+            isUserValid = await this.#nomineeService.getNomineeByEmail(req.body);
             
             if (isUserValid) {
                 res.status(400).json({status: 400, error: "nominee already exist with this email address"});
@@ -232,6 +236,82 @@ class ElectionController {
             }
 
             res.status(200).json(results)
+        } catch (ex) {
+            this.#helper.logError(ex);
+            res.status(500).json({error: "internal server error"});
+        }
+    }
+
+    sendNominationForm = async (req, res) => {
+        try {
+            let mailPayload = {
+                to: req.body.emailAddresses,
+                subject: "Action Required: Update Your Nomination Information for the Upcoming Election",
+                html: `<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <style>
+                    body {
+                      font-family: Arial, sans-serif;
+                      background-color: #f4f4f4;
+                      margin: 0;
+                      padding: 0;
+                    }
+                
+                    .container {
+                      max-width: 600px;
+                      margin: 20px auto;
+                      background-color: #ffffff;
+                      padding: 20px;
+                      border-radius: 8px;
+                      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                
+                    h1 {
+                      color: #333;
+                    }
+                
+                    p {
+                      color: #555;
+                    }
+                
+                    .cta-button {
+                      display: inline-block;
+                      padding: 10px 20px;
+                      background-color: #007bff;
+                      color: #fff;
+                      text-decoration: none;
+                      border-radius: 4px;
+                    }
+                  </style>
+                </head>
+                <body>
+                
+                  <div class="container">
+                    <h1>Election Nomination Update</h1>
+                    <p>Dear Nominee,</p>
+                    <p>We hope this message finds you well. As part of the upcoming election process, we kindly request you to update your data on the voting platform to ensure accurate and secure voting.</p>
+                    <p>Please click on the link below to update your information:</p>
+                    
+                    <a href="https://sa.bakare.tech/nominee/${req.body.CategoryId}" class="cta-button">Update Information</a>
+                
+                    <p>If you encounter any issues or have questions, please contact our support team.</p>
+                
+                    <p>Thank you for your participation in the election!</p>
+                
+                    <p>Best regards,<br>Your Election Committee</p>
+                  </div>
+                
+                </body>
+                </html>
+                `
+            }
+
+            this.#messenger.mail(mailPayload);
+
+            res.status(200).json({message: "done"})
         } catch (ex) {
             this.#helper.logError(ex);
             res.status(500).json({error: "internal server error"});

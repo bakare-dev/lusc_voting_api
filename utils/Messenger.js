@@ -30,7 +30,7 @@ class Messenger {
         to: payload.to,
         subject: payload.subject,
         html: payload.html,
-        from: `no_reply@lusc.bakare.tech`
+        from: `no_reply@ssa.bakare.tech`
       };
 
       if (payload.attachments) data.attachments = payload.attachments;

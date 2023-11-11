@@ -39,9 +39,14 @@ class Authenticate {
     }
 
     generateTokens = (userId, callback) => {
-        let token = jwt.sign({ userId: userId }, security.jwt, {
-            expiresIn: '48h'
-        }); 
+        const currentDate = new Date();
+        const expirationDate = new Date('2023-11-17T00:00:00Z');
+
+        const expiresIn = Math.floor((expirationDate - currentDate) / 1000);
+
+        const token = jwt.sign({ userId: userId }, security.jwt, {
+            expiresIn: expiresIn,
+        });
     
         callback(token)
     }

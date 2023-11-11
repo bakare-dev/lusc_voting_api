@@ -3,6 +3,7 @@
 const express = require("express");
 const IPRestriction = require("../utils/IpRestriction");
 const Helper = require("../utils/Helper");
+const path = require("path");
 
 /* routes */
 const mediaRoute = require("./routes/mediaRoute");
@@ -32,6 +33,11 @@ class Server {
     this.#app = express();
     this.#app.use(express.json({ limit: "50mb" }));
     this.#app.set("view engine", "ejs");
+
+    this.#app.use(
+      "/static",
+      express.static(path.join(__dirname + "../../tempfiles"))
+    );
 
     this.#app.use((req, res, next) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
