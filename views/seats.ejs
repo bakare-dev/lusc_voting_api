@@ -17,9 +17,32 @@
       <button type="button" onclick="validate()">Validate</button>
     </div>
     <script>
+      let typingTimer;
+      const doneTypingInterval = 1000; // 1 second
+
       function validateOnInput() {
-        // Call the validate function when input value changes
-        validate();
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(validate, doneTypingInterval);
+      }
+
+      function createProfile(user) {
+        // Create a user profile dynamically
+        const userProfile = document.createElement("div");
+        userProfile.innerHTML = `
+          <h2>User Profile</h2>
+          <p>ID: ${user.id}</p>
+          <p>First Name: ${user.firstName}</p>
+          <p>Last Name: ${user.lastName}</p>
+          <p>Email Address: ${user.emailAddress}</p>
+          <p>Matric No: ${user.matricNo}</p>
+          <p>Registration No: ${user.regNo}</p>
+          <p>Level: ${user.level}</p>
+        `;
+        document.body.appendChild(userProfile);
+      }
+
+      function clearInput() {
+        document.getElementById("regNo").value = "";
       }
 
       function validate() {
@@ -40,8 +63,9 @@
               return;
             }
 
-            console.log(res);
-            alert("fine");
+            const user = res.seat;
+            createProfile(user);
+            clearInput();
           })
           .catch((error) => alert("Try Again"));
       }
