@@ -409,11 +409,7 @@ class ElectionController {
 
     validateSeat = async (req, res) => {
         try {
-            let seat = await this.#seatService.getSeatDetailByMatricNo(req.params.matricNo);
-
-            if (!seat) {
-                seat = await this.#seatService.getSeatDetailByRegno(req.params.matricNo);
-            }
+            let seat = await this.#seatService.getSeatDetailByRegno(req.params.matricNo);
 
             if (!seat) {
                 res.status(400).json({error: "invalid matric/regno number"});

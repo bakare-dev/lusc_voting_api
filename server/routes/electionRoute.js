@@ -12,7 +12,7 @@ router.get("/result", controller.getWinners);
 router.post("/form/nominees", controller.sendNominationForm);
 router.post("/seat/register", controller.registerSeat);
 router.get("/seat/count", controller.getSeatCount);
-router.get("/seat/validate/:matricNo", controller.validateSeat)
+router.get("/seat/validate/:matricNo", controller.validateSeat);
 router.get("/votersall", controller.getVoters)
 
 module.exports = router;
