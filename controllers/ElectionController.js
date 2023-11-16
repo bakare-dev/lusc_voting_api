@@ -351,51 +351,26 @@ class ElectionController {
                 return;
             }
 
-            console.log(level);
-            console.log(matricNo);
+            const levelLimits = {
+                200: ["22", "21"],
+                300: ["21", "20"],
+                400: ["20", "19"],
+                500: ["19", "18"],
+            };
+            
+            const allowedPrefixes = levelLimits[level];
+            
+            if (!allowedPrefixes || !allowedPrefixes.some(prefix => matricNo.startsWith(prefix))) {
+                res.status(400).json({ error: `Seat limit reached for ${level} level` });
+                return;
+            }  
 
-            switch (level) {
-                case 200:
-                    if (!matricNo.startsWith("22") || !matricNo.startsWith("21")) {
-                        res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
-                        return;
-                    }
-                    break;
-                
-                case 300:
-                    if (!matricNo.startsWith("21") || !matricNo.startsWith("20")) {
-                      res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
-                      return;
-                    }
-                    break;
+            const regNo = req.body.regNo;
+            const emailAddress = req.body.emailAddress;
 
-                case 400:
-                    if (!matricNo.startsWith("20") || !matricNo.startsWith("19")) {
-                        res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
-                        return;
-                    }
-                    break;
-
-                case 500:
-                    if (!matricNo.startsWith("19") || !matricNo.startsWith("18")) {
-                      res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
-                      return
-                    }
-                    break;
-              
-                default:
-                    break;
-            }
-
-            let hasStudentVoted = await this.#voterService.getUserByMatricNo(req.body.matricNo);
-
-            if (!hasStudentVoted) {
-                hasStudentVoted = await this.#voterService.getUserByMatricNo(req.body.regNo);
-            }
-
-            if (!hasStudentVoted) {
-                hasStudentVoted = await this.#voterService.getUserByEmailAddress(req.body.emailAddress);
-            }
+            const hasStudentVoted = await this.#voterService.getUserByMatricNo(matricNo) ||
+                                    await this.#voterService.getUserByMatricNo(regNo) ||
+                                    await this.#voterService.getUserByEmailAddress(emailAddress);
 
             if (!hasStudentVoted) {
                 res.status(400).json({error: "You must have voted.", url: server.domain});
@@ -404,20 +379,14 @@ class ElectionController {
 
             const voteCount = await this.#voteService.getVoterVotesCount(hasStudentVoted.id);
 
-            if (voteCount != 23) {
-                res.status(400).json({error: "You must have voted for all categories, check you mailbox/spam for voting link and complete voting process."});
+            if (voteCount !== 23) {
+                res.status(400).json({error: "You must have voted for all categories, check your mailbox/spam for the voting link and complete the voting process."});
                 return;
             }
 
-            let hasStudentRegistered = await this.#seatService.getSeatDetailByRegno(req.body.regNo);
-
-            if (!hasStudentRegistered) {
-                hasStudentRegistered = await this.#seatService.getSeatDetailByMatricNo(req.body.matricNo);
-            }
-
-            if (!hasStudentRegistered) {
-                hasStudentRegistered = await this.#seatService.getSeatDetailByEmail(req.body.emailAddress);
-            }
+            const hasStudentRegistered = await this.#seatService.getSeatDetailByRegno(regNo) ||
+                                        await this.#seatService.getSeatDetailByMatricNo(matricNo) ||
+                                        await this.#seatService.getSeatDetailByEmail(emailAddress);
 
             if (hasStudentRegistered) {
                 res.status(400).json({error: "A seat has been booked with this matricno/regno/emailaddress"});

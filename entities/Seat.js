@@ -20,15 +20,18 @@ Seat.init(
         },
         matricNo: {
             type: DataTypes.STRING(),
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         emailAddress: {
             type: DataTypes.STRING(),
-            allowNull: false
+            allowNull: false,
+            unique: true,
         },
         regNo: {
             type: DataTypes.INTEGER(),
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         level: {
             type: DataTypes.INTEGER(),
