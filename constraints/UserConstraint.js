@@ -29,7 +29,8 @@ class UserConstraints {
             key: {
                 presence: true,
                 length: {
-                    minimum: 12
+                    minimum: 12,
+                    message: "access forbidden"
                 }
             },
         }

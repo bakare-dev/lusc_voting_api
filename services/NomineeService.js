@@ -88,7 +88,7 @@ class NomineeService extends Service {
     getNomineeByEmail = async (query) => {
         return await NomineeEntity.findOne({
             where: {
-                emailAddress: query.email,
+                emailAddress: query.emailAddress,
                 CategoryId: query.CategoryId
             }
         })

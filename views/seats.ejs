@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Barcode Scanner</title>
+    <style>
+      #qr-code-scanner {
+        width: 100%;
+        max-width: 400px;
+        margin: 50px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="qr-code-scanner"></div>
+
+    <div>
+      <input type="text" id="regNo" placeholder="Matric/Reg No" />
+      <button type="button" onclick="validate()">Validate</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const qrCodeScanner = new Html5QrcodeScanner("qr-code-scanner", {
+          fps: 10,
+          qrbox: 250,
+        });
+
+        qrCodeScanner.render(onScanSuccess);
+
+        function onScanSuccess(decodedText, decodedResult) {
+          document.getElementById("regNo").value = decodedText;
+        }
+      });
+
+      function validate() {
+        const regno = document.getElementById("regNo").value;
+
+        console.log(regno);
+
+        if (regno == "") {
+          alert("Regno can't be null");
+          return;
+        }
+        fetch(`/api/v1/election/seat/validate/${regno}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.error) {
+              alert(res.error);
+              return;
+            }
+
+            console.log(res);
+            alert("fine");
+          })
+          .catch((error) => alert("Try Again"));
+      }
+    </script>
+  </body>
+</html>

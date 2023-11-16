@@ -47,6 +47,7 @@ class DatabaseEngine {
             db.Admin = require("../entities/Admin");
             db.Nominee = require("../entities/Nominee");
             db.Category = require("../entities/Category");
+            db.Seat = require("../entities/Seat");
 
             this.#connectionManager.db = db;
 

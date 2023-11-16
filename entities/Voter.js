@@ -9,11 +9,13 @@ Voter.init(
     {
         emailAddress: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         matricNo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         session: {
             type: DataTypes.STRING,

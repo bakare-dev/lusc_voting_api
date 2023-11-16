@@ -44,6 +44,12 @@ class UserController {
                 return;
             }
 
+			const regno = req.body.matricNo;
+            if (!(regno.startsWith("19") || regno.startsWith("20") || regno.startsWith("21") || regno.startsWith("22"))) {
+                res.status(400).json({ error: "Only Students from 200-500 Levels are allowed to vote." });
+                return;
+            }
+
             const pattern = /^[a-zA-Z0-9._%+-]+@lmu\.edu\.ng$/;
 
             if (!pattern.test(req.body.emailAddress)) {
@@ -65,6 +71,10 @@ class UserController {
             const user = await this.#service.create(req.body);
             
             if (!user.id) {
+                if (user.name === 'SequelizeUniqueConstraintError') {
+                    res.status(400).json({error: "A voter with this email address or matriculation number already exists."});
+                    return;
+                }
                 res.status(400).json({error: "internal server error"});
                 return;
             }
@@ -131,7 +141,8 @@ class UserController {
                         <h1>Registration Successful!</h1>
                         <p>Thank you for registering on our voting application. Your account is now active.</p>
                         <a class="button" href="${url}" target="_blank">Click here to vote</a>
-                        <p class="validity">This voting link is valid until the voting period expires.</p>
+                        <p class="validity">This voting link is valid until the voting period expires. If the button doesn't work, click on link below.</p>
+                      <a href="${url}" target="_blank">${url}</a>
                     </div>
                 </body>
                 </html>

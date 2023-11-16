@@ -13,6 +13,10 @@ class VoterService extends Service {
         instance = this;
     }
 
+    getAll = async () => {
+        return await VoterEntity.findAll();
+    }
+
 
     getUserByMatricNo = async (matricno) => {
         return await VoterEntity.findOne({

@@ -7,6 +7,7 @@ const Helper = require("../utils/Helper");
 const validate = require("validate.js");
 const { server } = require("../config/main.settings");
 const Messenger = require("../utils/Messenger");
+const SeatService = require("../services/SeatService");
 
 let instance;
 
@@ -19,6 +20,7 @@ class ElectionController {
     #helper;
     #constraint;
     #messenger;
+    #seatService;
 
     constructor() {
         if (instance) return instance;
@@ -30,6 +32,7 @@ class ElectionController {
         this.#helper = new Helper();
         this.#constraint = new ElectionConstraint();
         this.#messenger = new Messenger();
+        this.#seatService = new SeatService();
  
         instance = this;
     }
@@ -162,7 +165,7 @@ class ElectionController {
             for ( const candidate of nominees ) {
                 const nomineeVotes = await this.#voteService.getNomineeVotesCount(candidate.id);
 
-                let percentage = (nomineeVotes / totalVotes) * 100;
+                let percentage = Math.round((nomineeVotes / totalVotes) * 100);
 
                 if (isNaN(percentage)) {
                   percentage = 0;
@@ -190,6 +193,7 @@ class ElectionController {
 
     getWinners = async (req, res) => {
         try {
+            
             const categories = await this.#categoryService.fetchAll(req.query);
 
             let results = [];
@@ -206,7 +210,7 @@ class ElectionController {
                 for ( const candidate of nominees ) {
                     const nomineeVotes = await this.#voteService.getNomineeVotesCount(candidate.id);
 
-                    let percentage = (nomineeVotes / totalVotes) * 100;
+                    let percentage = Math.round((nomineeVotes / totalVotes) * 100);
 
                     if (isNaN(percentage)) {
                       percentage = 0;
@@ -295,13 +299,15 @@ class ElectionController {
                     <p>We hope this message finds you well. As part of the upcoming election process, we kindly request you to update your data on the voting platform to ensure accurate and secure voting.</p>
                     <p>Please click on the link below to update your information:</p>
                     
-                    <a href="https://sa.bakare.tech/nominee/${req.body.CategoryId}" class="cta-button">Update Information</a>
+                    <a href="https://ssaapi.bakare.tech/nominee/${req.body.CategoryId}" class="cta-button">Update Information</a>
                 
                     <p>If you encounter any issues or have questions, please contact our support team.</p>
                 
                     <p>Thank you for your participation in the election!</p>
                 
                     <p>Best regards,<br>Your Election Committee</p>
+                    <p>Click on the link below, if the above button doesn't work.</p>
+                    <p><a href="https://ssaapi.bakare.tech/nominee/${req.body.CategoryId}">https://ssaapi.bakare.tech/nominee/${req.body.CategoryId}</a></p>
                   </div>
                 
                 </body>
@@ -317,6 +323,171 @@ class ElectionController {
             res.status(500).json({error: "internal server error"});
         }
     }
+
+    registerSeat = async (req, res) => {
+        try {
+            const matricNo = req.body.matricNo;
+            const level = req.body.level;
+
+            if (!req.body.emailAddress.endsWith("@lmu.edu.ng")) {
+                res.status(400).json({error: "Must be a valid landmark university email address"});
+                return;
+            }
+
+            if (level == 100) {
+                res.status(400).json({ error: "Only students from 200-500 levels are allowed to book a seat" });
+                return;
+            }
+
+            if (!["18", "19", "20", "21", "22"].some(prefix => matricNo.startsWith(prefix))) {
+                res.status(400).json({ error: "Only students from 200-500 levels are allowed to book a seat" });
+                return;
+            }
+
+            const levelCount = await this.#seatService.getLevelCount(level);
+
+            if (levelCount >= 50) {
+                res.status(400).json({ error: `Seat limit reached for ${level} level` });
+                return;
+            }
+
+            console.log(level);
+            console.log(matricNo);
+
+            switch (level) {
+                case 200:
+                    if (!matricNo.startsWith("22") || !matricNo.startsWith("21")) {
+                        res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
+                        return;
+                    }
+                    break;
+                
+                case 300:
+                    if (!matricNo.startsWith("21") || !matricNo.startsWith("20")) {
+                      res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
+                      return;
+                    }
+                    break;
+
+                case 400:
+                    if (!matricNo.startsWith("20") || !matricNo.startsWith("19")) {
+                        res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
+                        return;
+                    }
+                    break;
+
+                case 500:
+                    if (!matricNo.startsWith("19") || !matricNo.startsWith("18")) {
+                      res.status(400).json({ error: `Seat limit reached for ${req.body.level} level` });
+                      return
+                    }
+                    break;
+              
+                default:
+                    break;
+            }
+
+            let hasStudentVoted = await this.#voterService.getUserByMatricNo(req.body.matricNo);
+
+            if (!hasStudentVoted) {
+                hasStudentVoted = await this.#voterService.getUserByMatricNo(req.body.regNo);
+            }
+
+            if (!hasStudentVoted) {
+                hasStudentVoted = await this.#voterService.getUserByEmailAddress(req.body.emailAddress);
+            }
+
+            if (!hasStudentVoted) {
+                res.status(400).json({error: "You must have voted.", url: server.domain});
+                return;
+            }
+
+            const voteCount = await this.#voteService.getVoterVotesCount(hasStudentVoted.id);
+
+            if (voteCount != 23) {
+                res.status(400).json({error: "You must have voted for all categories, check you mailbox/spam for voting link and complete voting process."});
+                return;
+            }
+
+            let hasStudentRegistered = await this.#seatService.getSeatDetailByRegno(req.body.regNo);
+
+            if (!hasStudentRegistered) {
+                hasStudentRegistered = await this.#seatService.getSeatDetailByMatricNo(req.body.matricNo);
+            }
+
+            if (!hasStudentRegistered) {
+                hasStudentRegistered = await this.#seatService.getSeatDetailByEmail(req.body.emailAddress);
+            }
+
+            if (hasStudentRegistered) {
+                res.status(400).json({error: "A seat has been booked with this matricno/regno/emailaddress"});
+                return;
+            }
+
+            const seat = await this.#seatService.create(req.body);
+
+            if (!seat.id) {
+                res.status(400).json({error: "Try Again Later"});
+                return;
+            }
+
+            res.status(200).json({message: "Thank you for registering. Make sure you come along with your Student ID Card"})
+        } catch (ex) {
+            this.#helper.logError(ex);
+            res.status(500).json({error: "internal server error"});
+        }
+    }
+
+    validateSeat = async (req, res) => {
+        try {
+            let seat = await this.#seatService.getSeatDetailByMatricNo(req.params.matricNo);
+
+            if (!seat) {
+                seat = await this.#seatService.getSeatDetailByRegno(req.params.matricNo);
+            }
+
+            if (!seat) {
+                res.status(400).json({error: "invalid matric/regno number"});
+                return;
+            }
+
+            res.status(200).json({seat})
+        } catch (ex) {
+            this.#helper.logError(ex);
+            res.status(500).json({error: "internal server error"});
+        }
+    }
+
+    getSeatCount = async (req, res) => {
+        try {
+            const seats = await this.#seatService.getSeatCount();
+
+            res.status(200).json({amount: seats});
+        } catch (ex) {
+            this.#helper.logError(ex);
+            res.status(500).json({error: "internal server error"});
+        }
+    }
+
+    getVoters = async (req, res) => {
+        try {
+            const votes = await this.#voterService.getAll();
+            
+            // Find duplicate email addresses
+            const duplicateEmails = votes
+                .map(voter => voter.emailAddress)
+                .filter((email, index, arr) => arr.indexOf(email) !== index);
+    
+            // Filter voters with duplicate email addresses
+            const votersWithDuplicates = votes.filter(voter => duplicateEmails.includes(voter.emailAddress));
+    
+            res.status(200).json(votersWithDuplicates);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    };
+    
 
     #findHighestPercentage = (arr) => {
         let highestPercentage = 0;

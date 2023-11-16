@@ -19,7 +19,7 @@ module.exports = {
       accessKey: process.env.AWS_ACCESS_KEY,
       secretKey: process.env.AWS_SCERET_KEY,
     },
-    ip: process.env.IP
+    ip: '196.223.x.x'
   },
   database: {
     development: {
