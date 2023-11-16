@@ -8,11 +8,20 @@
   </head>
   <body>
     <div>
-      <input type="text" id="regNo" placeholder="Matric/Reg No" />
+      <input
+        type="text"
+        id="regNo"
+        placeholder="Matric/Reg No"
+        oninput="validateOnInput()"
+      />
       <button type="button" onclick="validate()">Validate</button>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
+      function validateOnInput() {
+        // Call the validate function when input value changes
+        validate();
+      }
+
       function validate() {
         const regno = document.getElementById("regNo").value;
 
