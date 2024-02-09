@@ -19,6 +19,18 @@ module.exports = {
       user: process.env.SMTP_USN,
       password: process.env.SMTP_PASSWORD,
     },
+    smtp2: {
+      host: process.env.SMTP_HOST2,
+      port: process.env.SMTP_PORT2,
+      user: process.env.SMTP_USN2,
+      password: process.env.SMTP_PASSWORD2,
+    },
+    smtp3: {
+      host: process.env.SMTP_HOST3,
+      port: process.env.SMTP_PORT3,
+      user: process.env.SMTP_USN3,
+      password: process.env.SMTP_PASSWORD3,
+    },
     s3: {
       bucket: process.env.AWS_S3_BUCKET,
       region: process.env.AWS_S3_REGION,

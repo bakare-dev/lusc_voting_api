@@ -12,7 +12,7 @@ main = () => {
         process.env.TZ = infrastructure.timezone;
         let serverEngine = new Server(server.port);
         serverEngine.start();
-        
+
         // const db = new DatabaseEngine();
 
         // db.connect( async () => {
