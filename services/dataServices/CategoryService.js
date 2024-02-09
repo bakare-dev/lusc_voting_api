@@ -19,28 +19,12 @@ class CategoryService extends Service {
 
 
     getCategoriesByAssociation = async (associateId) => {
-        let response;
-        response = await CategoryEntity.findAndCountAll({
+        return await CategoryEntity.findAndCountAll({
             where: {
                 AssociateId: associateId
             },
             order: [["createdAt", "DESC"]],
-            ...this.#helper.paginate(query.page, query.size),
         });
-  
-        if (query.page && query.page != "undefined") {
-            response.currentPage = query.page;
-        } else {
-            response.currentPage = "0";
-        }
-  
-        if (query.size && query.size != "undefined") {
-            response.currentSize = query.size;
-        } else {
-            response.currentSize = "50";
-        }
-  
-        return response;
     }
 
 }

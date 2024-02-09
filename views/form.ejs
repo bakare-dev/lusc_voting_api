@@ -5,113 +5,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
-        font-family: "Arial", sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
+    font-family: "Arial", sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
 
-      .form {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
+  .form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px; /* Adjust as needed */
+    width: 100%;
+    margin: 20px;
+  }
 
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: bold;
-      }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-      input {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 16px;
-        box-sizing: border-box;
-      }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
 
-      .file-upload-btn-wrapper {
-        position: relative;
-        overflow: hidden;
-        display: inline-block;
-      }
+  input[type="text"],
+  input[type="email"],
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
 
-      .file-upload-btn-wrapper .btn {
-        border: 2px solid gray;
-        color: gray;
-        background-color: white;
-        padding: 8px 20px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: bold;
-      }
+  .file-upload-btn-wrapper .btn {
+    border: 2px solid gray;
+    color: gray;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
 
-      .file-upload-btn-wrapper input[type="file"] {
-        font-size: 100px;
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-      }
+  .file-upload-btn-wrapper .btn:hover {
+    background-color: #f0f0f0;
+  }
 
-      .file-added {
-        background-color: #4caf50;
-        color: green;
-        padding: 8px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+  .file-upload-btn-wrapper input[type="file"] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+  }
 
-      button {
-        background-color: #4caf50;
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+  .file-added {
+    background-color: #4caf50;
+    color: green;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-      button:hover {
-        background-color: #45a049;
-      }
+  button[type="button"] {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  button[type="button"]:hover {
+    background-color: #45a049;
+  }
     </style>
-    <title>Skilled Award Nominees</title>
+    <title>Voting Nominees</title>
   </head>
   <body>
     <div class="form">
-      <h1>Student Skilled Award Top Three Nominees Form</h1>
+      <h1>Nominees Form</h1>
       <label for="firstName">First Name:</label>
       <input type="text" id="firstName" placeholder="First Name" required />
-
+    
       <label for="lastName">Last Name:</label>
       <input type="text" id="lastName" placeholder="Last Name" required />
-
-      <label for="nickname">Nickname:</label>
-      <input type="text" id="nickname" placeholder="nickname(IG handle)" />
-
+    
+      <label for="nickname">Nickname: (not required)</label>
+      <input type="text" id="nickname" placeholder="Nickname (IG handle)" />
+    
       <label for="emailAddress">Email Address:</label>
-      <input
-        type="email"
-        id="emailAddress"
-        placeholder="name@lmu.edu.ng"
-        required
-      />
+      <input type="email" id="emailAddress" placeholder="name@lmu.edu.ng" required />
+    
       <label for="matricNo">Matric No:</label>
       <input type="text" id="matricNo" placeholder="10FF919212" required />
-
+    
       <div class="file-upload-btn-wrapper">
-        <button class="btn" onclick="uploadPicture()">Select Picture</button>
+        <button class="btn" onclick="document.getElementById('image').click()">Select Picture</button>
         <input type="file" id="image" onchange="addImage()" />
       </div>
-
-      <input type="hidden" id="categoryId" value="<%= id %>" />
-
+      <br />
+      <br />
+    
+      <select id="category" required>
+        <!-- Options will be populated dynamically -->
+      </select>
+    
+      <input type="hidden" id="associationId" value="<%= id %>" />
+    
       <br />
       <br />
       <button type="button" onclick="submitForm()" id="submitButton" disabled>
@@ -121,6 +138,28 @@
 
     <script>
       let pictureUrl;
+
+      function fetchCategories() {
+        const associationId = document.getElementById("associationId").value;
+        fetch(`/api/v1/election/association/categories?assocationId=${associationId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            const categoryDropdown = document.getElementById("category");
+            data.categories.rows.forEach((category) => {
+              const option = document.createElement("option");
+              option.value = category.id;
+              option.textContent = category.category;
+              categoryDropdown.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching categories:", error);
+          });
+      }
+
+      window.onload = function () {
+        fetchCategories();
+      };
 
       function addImage() {
         const input = document.getElementById("image");
@@ -142,11 +181,6 @@
             return res.json();
           })
           .then((res) => {
-            if (res.status != 200) {
-              alert(res.error);
-              return;
-            }
-
             alert("Image uploaded successfully");
             pictureUrl = res.url;
             document.getElementById("submitButton").disabled = false;
@@ -160,7 +194,7 @@
       }
 
       function submitForm() {
-        const id = document.getElementById("categoryId").value;
+        const categoryId = document.getElementById("category").value;
         const lastName = document.getElementById("lastName").value;
         const nickname = document.getElementById("nickname").value;
         const firstName = document.getElementById("firstName").value;
@@ -168,7 +202,7 @@
         const matricNo = document.getElementById("matricNo").value;
         let body = {};
 
-        if (id != "") body.CategoryId = parseInt(id);
+        if (categoryId != "") body.CategoryId = parseInt(categoryId);
         if (lastName != "") body.lastName = lastName;
         if (firstName != "") body.firstName = firstName;
         if (nickname != "") body.nickname = nickname;

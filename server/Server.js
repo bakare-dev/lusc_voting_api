@@ -81,7 +81,7 @@ class Server {
       next();
     });
 
-    this.#app.use(this.#ipRestriction.restrictToIPAddress);
+    // this.#app.use(this.#ipRestriction.restrictToIPAddress);
     this.#app.use(this.#checkRateLimit);
   };
 
@@ -90,13 +90,9 @@ class Server {
     this.#app.use("/api/v1/election", electionRoute);
     this.#app.use("/api/v1/user", userRoute);
 
-    this.#app.get("/category/nominee/:id", (req, res) => {
+    this.#app.get("/association/:id", (req, res) => {
       const id = req.params.id;
       res.render("form", { id });
-    });
-
-    this.#app.get("/seat", (req, res) => {
-      res.render("seats");
     });
 
     this.#app.get("/health", (req, res) => {

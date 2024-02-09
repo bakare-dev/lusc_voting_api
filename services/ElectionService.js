@@ -48,10 +48,11 @@ class UserService {
 
     getCategoriesbyAssociation = async (associationId, callback) => {
         try {
-            const categories = await this.#categoryService.getCategoriesByAssociation();
+            const categories = await this.#categoryService.getCategoriesByAssociation(associationId);
 
             callback({status: 200, categories})
         } catch (err) {
+            console.log(err)
             this.#logger.error(err);
             callback({status: 500, error: "Internal Server Error"});
         }
