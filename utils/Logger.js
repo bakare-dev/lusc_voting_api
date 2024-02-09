@@ -19,7 +19,7 @@ class Logger {
           format: winston.format.simple(),
           transports: [
               new winston.transports.Console(),
-              new LogtailTransport(this.#logtail)
+              //new LogtailTransport(this.#logtail)
           ]
         });
 

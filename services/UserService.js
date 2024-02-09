@@ -1,3 +1,4 @@
+const { server } = require("../config/main.settings");
 const Authenticate = require("../utils/Authentication");
 const Logger = require("../utils/Logger");
 const NotificationService = require("./NotificationService");
@@ -107,6 +108,7 @@ class UserService {
                 }
             });
         } catch (err) {
+            console.log(err);
             this.#logger.error(err);
             callback({status: 500, error: "Internal Server Error"});
         }
@@ -115,7 +117,7 @@ class UserService {
     votersValidation = async (token, callback) => {
         try {
             const reqDate = new Date();
-            const expiresIn = new Date("2023-11-17T00:00:00");
+            const expiresIn = new Date("2024-11-18T00:00:00");
 
             if (reqDate > expiresIn) {
                 callback({ status: 422, error: "Voting Closed" });
@@ -137,9 +139,8 @@ class UserService {
             }
 
             const votedCategoryIds = (await this.#voteService.getVoterCategories(user.id)).map(votedCategory => votedCategory.CategoryId);
-            const categories = (await this.#categoryService.fetchAll({}))
-                .filter(category => !votedCategoryIds.includes(category.id))
-                .map(({ id, name }) => ({ id, name }));
+            const categoriesResp = await this.#categoryService.fetchAll({})
+            const categories = categoriesResp.rows.filter(category => !votedCategoryIds.includes(category.id)).map(({ id, category }) => ({ id, category }));
 
             callback({ status: 200, user: { userId: user.id, categories } });
         } catch (err) {

@@ -47,7 +47,7 @@ class Authenticate {
 
   generateTokens = (userId, callback) => {
     const currentDate = new Date();
-    const expirationDate = new Date("2023-11-18T00:00:00Z");
+    const expirationDate = new Date("2024-11-18T00:00:00Z");
 
     const expiresIn = Math.floor((expirationDate - currentDate) / 1000);
 
