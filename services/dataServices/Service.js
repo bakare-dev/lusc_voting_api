@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const Helper = require("../utils/Helper");
+const Helper = require("../../utils/Helper");
 class Service {
   #entity;
   #helper;

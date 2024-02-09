@@ -1,4 +1,4 @@
-const AdminEntity = require("../entities/Admin");
+const AdminEntity = require("../../entities/Admin");
 const Service = require("./Service");
 
 let instance;

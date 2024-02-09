@@ -1,6 +1,6 @@
-const VoteEntity = require("../entities/Vote");
+const VoteEntity = require("../../entities/Vote");
 const SeatEntity = require("../entities/Seat");
-const Helper = require("../utils/Helper");
+const Helper = require("../../utils/Helper");
 const Service = require("./Service");
 
 let instance;

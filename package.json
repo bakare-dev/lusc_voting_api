@@ -10,7 +10,10 @@
   "author": "Bakare Praise",
   "license": "ISC",
   "dependencies": {
+    "@logtail/node": "^0.4.19",
+    "@logtail/winston": "^0.4.19",
     "aws-sdk": "^2.1483.0",
+    "cloudinary": "^2.0.1",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
@@ -21,6 +24,8 @@
     "nodemailer": "^6.9.7",
     "sequelize": "^6.33.0",
     "uuid": "^9.0.1",
-    "validate.js": "^0.13.1"
+    "validate.js": "^0.13.1",
+    "winston": "^3.11.0",
+    "winston-logstash": "^1.2.1"
   }
 }

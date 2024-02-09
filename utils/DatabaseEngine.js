@@ -2,6 +2,7 @@
 const config = require("../config/main.settings")
 const { Sequelize } = require('sequelize');
 const Helper = require("./Helper");
+const Logger = require("./Logger");
 
 
 let instance;
@@ -10,13 +11,13 @@ class DatabaseEngine {
 
     #connectionManager;
     
-    #helper;
+    #logger;
 
     constructor() {
 
         if (instance) return instance;
 
-        this.#helper = new Helper()
+        this.#logger = new Logger().getLogger();
 
         this.#connectionManager = new Sequelize(config.database.development.database, config.database.development.username, config.database.development.password, {
             host: config.database.development.host,
@@ -33,7 +34,7 @@ class DatabaseEngine {
             await this.#synchronize();
             cb();
         } catch (e) {
-            this.#helper.logError(e);
+            this.#logger.error(e);
         }
     }
 
@@ -47,14 +48,14 @@ class DatabaseEngine {
             db.Admin = require("../entities/Admin");
             db.Nominee = require("../entities/Nominee");
             db.Category = require("../entities/Category");
-            db.Seat = require("../entities/Seat");
+            db.Associate = require("../entities/Associate");
 
             this.#connectionManager.db = db;
 
             await this.#connectionManager.sync({alter: true});
 
         } catch (e) {
-            this.#helper.logError(e);
+            this.#logger.error(e);
         }
     }
 

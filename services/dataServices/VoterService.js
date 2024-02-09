@@ -1,4 +1,4 @@
-const VoterEntity = require("../entities/Voter");
+const VoterEntity = require("../../entities/Voter");
 const Service = require("./Service");
 
 let instance;

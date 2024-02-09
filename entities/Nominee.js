@@ -31,7 +31,6 @@ Nominee.init(
         nickname: {
             type: DataTypes.STRING,
         }
-
     },
     {
         sequelize: db.getConnectionManager()

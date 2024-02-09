@@ -1,6 +1,6 @@
-const CategoryEntity = require("../entities/Category");
-const NomineeEntity = require("../entities/Nominee");
-const VoteEntity = require("../entities/Vote");
+const CategoryEntity = require("../../entities/Category");
+const NomineeEntity = require("../../entities/Nominee");
+const VoteEntity = require("../../entities/Vote");
 const Service = require("./Service");
 
 let instance;

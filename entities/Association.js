@@ -1,25 +1,24 @@
 const DatabaseEngine = require("../utils/DatabaseEngine");
 const { Model, DataTypes} = require("sequelize");
-const Associate = require("./Association");
 
 const db = new DatabaseEngine();
 
-class Category extends Model {};
+class Associate extends Model {};
 
-Category.init(
+Associate.init(
     {
-        category: {
+        title: {
             type: DataTypes.STRING,
             allowNull: false
         },
-
+        code: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }
     },
     {
         sequelize: db.getConnectionManager()
     }
 )
 
-Associate.hasMany(Category);
-Category.belongsTo(Associate);
-
-module.exports = Category;
+module.exports = Associate;

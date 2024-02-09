@@ -1,25 +1,20 @@
-let S3Storage = require("../utils/S3Storage");
-
+const CloudinaryService = require("../utils/CloudinaryService");
 let instance;
 class MediaService {
-
   #s3;
+  #cloudinary;
 
   constructor() {
     if (instance) return instance;
 
-    this.#s3 = new S3Storage();
+    this.#cloudinary = new CloudinaryService();
 
     instance = this;
   }
 
-  write = async (media) => {
-    return await this.#s3.write(media);
+  writeCloudinary = async (media) => {
+    return await this.#cloudinary.write(media);
   };
-
-  delete = async (key) => {
-    return await this.#s3.delete(key)
-  }
 }
 
 module.exports = MediaService;

@@ -13,13 +13,32 @@ module.exports = {
       username: process.env.NODEMAILER_USERNAME,
       password: process.env.NODEMAILER_PASSWORD,
     },
+    smtp: {
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      user: process.env.SMTP_USN,
+      password: process.env.SMTP_PASSWORD,
+    },
     s3: {
       bucket: process.env.AWS_S3_BUCKET,
       region: process.env.AWS_S3_REGION,
       accessKey: process.env.AWS_ACCESS_KEY,
       secretKey: process.env.AWS_SCERET_KEY,
     },
-    ip: '196.223.x.x'
+    ip: '196.223.x.x',
+    timezone: "Africa/Lagos",
+    cloudinary: {
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      apiSecret: process.env.CLOUDINARY_API_SECRET,
+      apiName: process.env.CLOUDINARY_API_NAME,
+      apiUpload: process.env.CLOUDINARY_API_UPLOAD,
+      cloudinaryUrl: process.env.CLOUDINARY_URL,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    },
+    winston: {
+      server: process.env.WINSTONSOURCESERVER,
+      sourceToken: process.env.WINSTONSOURCETOKEN,
+    },
   },
   database: {
     development: {

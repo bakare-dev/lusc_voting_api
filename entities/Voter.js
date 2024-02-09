@@ -1,5 +1,6 @@
 const DatabaseEngine = require("../utils/DatabaseEngine");
 const { Model, DataTypes} = require("sequelize");
+const Associate = require("./Association");
 
 const db = new DatabaseEngine();
 
@@ -25,5 +26,8 @@ Voter.init(
         sequelize: db.getConnectionManager()
     }
 )
+
+Associate.hasMany(Voter);
+Voter.belongsTo(Associate);
 
 module.exports = Voter;

@@ -9,13 +9,14 @@ const path = require("path");
 const mediaRoute = require("./routes/mediaRoute");
 const electionRoute = require("./routes/electionRoute");
 const userRoute = require("./routes/userRoute");
+const Logger = require("../utils/Logger");
 
 let instance;
 class Server {
   #app;
   #port;
   #ipRestriction;
-  #helper;
+  #logger;
   #ipRequestCount = new Map();
   #rateLimitWindowMs = 30000; // 30 seconds window
   #maxRequestsPerWindow = 10; // 10 requests per window
@@ -25,7 +26,7 @@ class Server {
 
     this.#port = port;
     this.#ipRestriction = new IPRestriction();
-    this.#helper = new Helper();
+    this.#logger = new Logger().getLogger();
     this.#configure();
     this.#buildRoutes();
 
@@ -76,12 +77,11 @@ class Server {
 
       if (req.method === "OPTIONS") {
         return res.sendStatus(200);
-        x;
       }
       next();
     });
 
-    //this.#app.use(this.#ipRestriction.restrictToIPAddress);
+    this.#app.use(this.#ipRestriction.restrictToIPAddress);
     this.#app.use(this.#checkRateLimit);
   };
 
@@ -90,10 +90,10 @@ class Server {
     this.#app.use("/api/v1/election", electionRoute);
     this.#app.use("/api/v1/user", userRoute);
 
-    // this.#app.get("/category/nominee/:id", (req, res) => {
-    //   const id = req.params.id;
-    //   res.render("form", { id });
-    // });
+    this.#app.get("/category/nominee/:id", (req, res) => {
+      const id = req.params.id;
+      res.render("form", { id });
+    });
 
     this.#app.get("/seat", (req, res) => {
       res.render("seats");
@@ -101,13 +101,13 @@ class Server {
 
     this.#app.get("/health", (req, res) => {
       res.status(200).json({
-        message: "lusc skilled award server is running fine",
+        message: "voting server is running fine",
       });
     });
 
     this.#app.get("/", (req, res) => {
       res.status(200).json({
-        message: "you have reached lusc skilled award server",
+        message: "you have reached votind server",
         swagger: "/swagger",
         api: "/api/v1",
         health: "/health",
@@ -117,9 +117,7 @@ class Server {
 
   start = () => {
     this.#app.listen(this.#port, () => {
-      this.#helper.logInfo(
-        "lusc skilled award server is up at port " + this.#port
-      );
+      this.#logger.info("voting server is up at port " + this.#port)
     });
   };
 
