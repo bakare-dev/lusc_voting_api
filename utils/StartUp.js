@@ -1,5 +1,6 @@
 
 const CategoryService = require("../services/dataServices/CategoryService");
+const AssociationService = require("../services/dataServices/AssociationService");
 const Logger = require("./Logger");
 
 let instance;
@@ -8,43 +9,47 @@ class StartUp {
 
     #logger;
     #categoryService;
+    #associationService;
 
     constructor () {
         if (instance) return instance;
 
         this.#logger = new Logger().getLogger();
         this.#categoryService = new CategoryService();
+        this.#associationService = new AssociationService();
 
         instance = this;
     }
 
     addCategory = async () => {
         try {
+            const association = await this.#associationService.create({
+                title: "NACOS",
+                code: "CD"
+            })
+
+            if (!association.id) {
+                this.#logger.error("error occurred adding association");
+                process.exit(1);
+            }
+
             const categories = [
-                { category: "Leadership Award" },
-                { category: "Social Impact Award" },
-                { category: "Lecturer of the Year - CBS" },
-                { category: "Lecturer of the Year - CPAS" },
-                { category: "Lecturer of the Year - COE" },
-                { category: "Lecturer of the Year - CAS" },
-                { category: "Student of the Year (ICON 360)" },
-                { category: "Entrepreneur of the Year" },
-                { category: "Brand of the Year" },
-                { category: "Tech-savvy of the Year" },
-                { category: "Comedian of the Year" },
-                { category: "Musician of the Year" },
-                { category: "Dancer of the Year" },
-                { category: "Actor of the Year" },
-                { category: "Athlete of the Year" },
-                { category: "Photographer of the Year" },
-                { category: "Artist of the Year" },
-                { category: "Graphic Designer of the Year" },
-                { category: "Videographer of the Year" },
-                { category: "Agripreneur of the Year" },
-                { category: "Model of the Year" },
-                { category: "SM Influencer of the Year" },
-                { category: "Content Creator of the Year" },
-                { category: "Fashion Designer of the Year" },
+                { category: "President", AssociateId: association.id},
+                { category: "Vice President", AssociateId: association.id},
+                { category: "General Secretary", AssociateId: association.id},
+                { category: "Public Relation Officer (Female)", AssociateId: association.id},
+                { category: "Public Relation Officer (Male)", AssociateId: association.id},
+                { category: "Academic Director", AssociateId: association.id},
+                { category: "Technical Director", AssociateId: association.id},
+                { category: "Financial Secretary", AssociateId: association.id},
+                { category: "Welfare Secretary (Male)", AssociateId: association.id},
+                { category: "Welfare Secretary (Female)", AssociateId: association.id},
+                { category: "Chaplain (Female)", AssociateId: association.id},
+                { category: "Chaplain (Male)", AssociateId: association.id},
+                { category: "Social Director (Female)", AssociateId: association.id},
+                { category: "Social Director (Male)", AssociateId: association.id},
+                { category: "Sport Director (Female)", AssociateId: association.id},
+                { category: "Sport Director (Male)", AssociateId: association.id},
             ]
 
             for ( const category of categories ) {
@@ -52,6 +57,7 @@ class StartUp {
 
                 if (!serviceResponse.id) {
                     this.#logger.error("error occurred adding " + category.category);
+                    process.exit(1);
                 } else {
                     this.#logger.info(category.category + " added")
                 }
