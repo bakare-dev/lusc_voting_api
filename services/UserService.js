@@ -111,7 +111,7 @@ class UserService {
     votersValidation = async (token, callback) => {
         try {
             const reqDate = new Date();
-            const expiresIn = new Date("2024-11-18T00:00:00");
+            const expiresIn = new Date("2024-02-11T23:59:59");
 
             if (reqDate > expiresIn) {
                 callback({ status: 422, error: "Voting Closed" });
