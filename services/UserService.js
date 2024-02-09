@@ -35,16 +35,10 @@ class UserService {
     votersRegistration = async (payload, callback) => {
         try {
             const regno = payload.matricNo;
-            const isMatricValid = /^(21|22|23)/.test(regno);
-            const isCDRequired = /^(21|22)/.test(regno);
+            const isMatricValid = /^(23)/.test(regno);
 
             if (!isMatricValid) {
-                callback({ status: 400, error: "Only Students from 100-300 Levels are allowed to vote." });
-                return;
-            }
-
-            if (isCDRequired && !regno.includes("CD")) {
-                callback({ status: 400, error: "Please use your matric number to register and ensure the alphabet is in uppercase (CD)." });
+                callback({ status: 400, error: "Only Students from 100 Levels are allowed to register." });
                 return;
             }
 

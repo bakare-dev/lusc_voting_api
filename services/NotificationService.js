@@ -21,7 +21,7 @@ class NotificationService {
         message.recipients.forEach(async (item) => {
 
             let info = {
-                sender: "noreply@nacos.bakare.tech",
+                sender: "no_reply@nacos.bakare.tech",
                 templateFile: "registration.ejs",
                 subject: "Voting Registration Successfully",
                 recipients: item,
