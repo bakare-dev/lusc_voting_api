@@ -143,6 +143,8 @@ class UserService {
 
     getCategoryVotes = async (params, callback) => {
         try {
+            const category = await this.#categoryService.findById(params.categoryId);
+
             const totalVotes = await this.#voteService.getVotesCountByCategory(params.categoryId);
 
             const serviceResponse = await this.#nomineeService.getNomineesByCategory(params);
@@ -168,13 +170,14 @@ class UserService {
                     emailAddress: candidate.emailAddress,
                     pictureUrl: candidate.pictureUrl,
                     category: candidate.Category.category,
+                    votes: nomineeVotes,
                     percentage: `${percentage} %`
                 }
 
                 results.push(nominee);
             }
 
-            callback({status: 200,  results, totalVotes});
+            callback({status: 200,  results, totalVotes, category });
         } catch (ex) {
             this.#logger.error(ex);
             callback({status: 500, error: "internal server error"});
@@ -213,6 +216,7 @@ class UserService {
                         emailAddress: candidate.emailAddress,
                         pictureUrl: candidate.pictureUrl,
                         category: candidate.Category.category,
+                        votes: nomineeVotes,
                     	percentage: `${percentage} %`
                     }
 
@@ -223,6 +227,7 @@ class UserService {
 
                 const categoryResult = {
                     category: category.category,
+                    totalVotes,
                     winner: winner[0] || {}
                 }
 
