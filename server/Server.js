@@ -18,8 +18,8 @@ class Server {
   #ipRestriction;
   #logger;
   #ipRequestCount = new Map();
-  #rateLimitWindowMs = 30000; // 30 seconds window
-  #maxRequestsPerWindow = 10; // 10 requests per window
+  #rateLimitWindowMs = 30000;
+  #maxRequestsPerWindow = 10;
 
   constructor(port) {
     if (instance) return instance;
@@ -81,7 +81,7 @@ class Server {
       next();
     });
 
-    // this.#app.use(this.#ipRestriction.restrictToIPAddress);
+    this.#app.use(this.#ipRestriction.restrictToIPAddress);
     this.#app.use(this.#checkRateLimit);
   };
 

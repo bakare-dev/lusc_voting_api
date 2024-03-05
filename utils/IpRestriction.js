@@ -16,10 +16,10 @@ class IPRestriction {
   restrictToIPAddress = (req, res, next) => {
     const clientIPAddress = req.ip;
 
-    // if (req.path.startsWith("/api/v1/election/categories") || req.path.startsWith("/api/v1/election/vote/category")) {
-    //   next();
-    //   return;
-    // }
+    if (req.path.startsWith("/api/v1/election/categories") || req.path.startsWith("/api/v1/election/vote/category")) {
+      next();
+      return;
+    }
     if (clientIPAddress.startsWith("196.223")) {
       next();
     } else {
