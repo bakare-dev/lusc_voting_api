@@ -1,4 +1,4 @@
-const { server } = require("../config/main.settings");
+const { server, infrastructure } = require("../config/main.settings");
 const Authenticate = require("../utils/Authentication");
 const Logger = require("../utils/Logger");
 const NotificationService = require("./NotificationService");
@@ -77,7 +77,7 @@ class UserService {
 
             await this.#voterService.update(user.id, { session: authResponse });
 
-            const url = server.domain + "/vote/" + authResponse;
+            const url = infrastructure.clientUrl + "/vote/" + authResponse;
             let userNotification = {
                 recipients: [`${user.emailAddress}`],
                 data: {

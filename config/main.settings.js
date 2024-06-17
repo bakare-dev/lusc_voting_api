@@ -2,40 +2,15 @@ require("dotenv").config();
 module.exports = {
   server: {
     port: process.env.PORT,
-    cron: process.env.CRON_JOB,
-    domain: "https://nacos.bakare.tech"
   },
   infrastructure: {
     dateFormat: "YYYY-MM-DD hh:mm:ss",
-    nodemailer: {
-      host: process.env.NODEMAILER_HOST,
-      port: process.env.NODEMAILER_PORT,
-      username: process.env.NODEMAILER_USERNAME,
-      password: process.env.NODEMAILER_PASSWORD,
-    },
+    clientUrl: "",
     smtp: {
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
       user: process.env.SMTP_USN,
       password: process.env.SMTP_PASSWORD,
-    },
-    smtp2: {
-      host: process.env.SMTP_HOST2,
-      port: process.env.SMTP_PORT2,
-      user: process.env.SMTP_USN2,
-      password: process.env.SMTP_PASSWORD2,
-    },
-    smtp3: {
-      host: process.env.SMTP_HOST3,
-      port: process.env.SMTP_PORT3,
-      user: process.env.SMTP_USN3,
-      password: process.env.SMTP_PASSWORD3,
-    },
-    s3: {
-      bucket: process.env.AWS_S3_BUCKET,
-      region: process.env.AWS_S3_REGION,
-      accessKey: process.env.AWS_ACCESS_KEY,
-      secretKey: process.env.AWS_SCERET_KEY,
     },
     ip: '196.223.x.x',
     timezone: "Africa/Lagos",
@@ -65,6 +40,5 @@ module.exports = {
   },
   security: {
     jwt: process.env.jwt,
-    crypto: process.env.crypto,
   },
 };

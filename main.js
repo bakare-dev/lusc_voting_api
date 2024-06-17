@@ -7,7 +7,6 @@ const logger = new Logger().getLogger();
 
 main = () => {
     try {
-        process.env.TZ = infrastructure.timezone;
         let serverEngine = new Server(server.port);
         serverEngine.start();
 
