@@ -72,6 +72,10 @@ To run the application locally, follow these steps:
     - **CLOUDINARY_URL**: URL for Cloudinary.
     - **CLOUDINARY_CLOUD_NAME**: Cloud name for Cloudinary.
 
+5. Go to config/main.settings.js and update client url value
+
+6. Go to utils/Authentication.js and update election expirationdate
+
 ### First Run Instructions
 
 Upon the first run of the application, follow these steps:
