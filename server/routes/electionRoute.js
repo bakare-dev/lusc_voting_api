@@ -3,6 +3,8 @@ const Controller = require("../../controllers/ElectionController.js");
 const controller = new Controller();
 
 router.get("/categories", controller.getCategories);
+router.post("/categories", controller.addCategories);
+router.post("/category", controller.addCategory);
 router.get("/association/categories", controller.getCategoriesByAssociation);
 router.get("/category/nominees/:categoryId", controller.getNominees);
 router.post("/vote", controller.addVote);

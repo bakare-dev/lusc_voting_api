@@ -33,6 +33,42 @@ class ElectionController {
         }
     }
 
+    addCategory = async (req, res) => {
+        try {
+            const validation = await validate(req.body, this.#constraint.addCategory());
+
+            if (validation) {
+                res.status(422).json(validation);
+                return;
+            }
+
+            this.#service.addCategory(req.body, resp => {
+                res.status(resp.status).json(resp);
+            })
+        } catch (ex) {
+            this.#logger.error(ex);
+            res.status(500).json({error: "internal server error"});
+        }
+    }
+
+    addCategories = async (req, res) => {
+        try {
+            const validation = await validate(req.body, this.#constraint.addCategories());
+
+            if (validation) {
+                res.status(422).json(validation);
+                return;
+            }
+
+            this.#service.addCategories(req.body.categories, resp => {
+                res.status(resp.status).json(resp);
+            })
+        } catch (ex) {
+            this.#logger.error(ex);
+            res.status(500).json({error: "internal server error"});
+        }
+    }
+
     getCategoriesByAssociation = async (req, res) => {
         try {
             this.#service.getCategoriesbyAssociation(req.query.assocationId, resp => {

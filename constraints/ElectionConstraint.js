@@ -48,6 +48,26 @@ class ElectionConstraint {
         }
     }
 
+    addCategory = () => {
+        return {
+            category: {
+                presence: true,
+                length: {
+                    minimum: 3
+                }
+            },
+        }
+    }
+
+    addCategories = () => {
+        return {
+            categories: {
+                presence: true,
+                type: "array"
+            },
+        }
+    }
+
     getCategoryVotes = () => {
         return {
             categoryId: {

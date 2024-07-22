@@ -46,6 +46,34 @@ class UserService {
         }
     }
 
+    addCategories = async (payload, callback) => {
+        try {
+            const categories = await this.#categoryService.insertBulk(payload);
+
+            callback({status: 200, message: "Categories added successfully"})
+        } catch (err) {
+            this.#logger.error(err);
+            callback({status: 500, error: "Internal Server Error"});
+        }
+    }
+
+    addCategory = async (payload, callback) => {
+        try {
+            const category = await this.#categoryService.create(payload);
+
+            if (!category.id) {
+                console.log(category)
+                callback({status: 400, error: "Error occurred creating category"});
+                return;
+            }
+
+            callback({status: 200, message: "Category added"})
+        } catch (err) {
+            this.#logger.error(err);
+            callback({status: 500, error: "Internal Server Error"});
+        }
+    }
+
     getCategoriesbyAssociation = async (associationId, callback) => {
         try {
             const categories = await this.#categoryService.getCategoriesByAssociation(associationId);
