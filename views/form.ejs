@@ -225,16 +225,7 @@
               return;
             }
             alert(res.message);
-            document.getElementById("lastName").value = "";
-            document.getElementById("nickname").value = "";
-            document.getElementById("firstName").value = "";
-            document.getElementById("emailAddress").value = "";
-            document.getElementById("matricNo").value = "";
-            document.getElementById("image").value = "";
-            pictureUrl = "";
-            document.getElementById("submitButton").disabled = true;
-            document.getElementById("image").disabled = false;
-            document.querySelector(".btn").innerText = "Select Picture";
+            location.reload(true);
           })
           .catch((error) => alert("Try again later"));
       }
