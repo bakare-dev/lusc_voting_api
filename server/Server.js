@@ -81,7 +81,7 @@ class Server {
       next();
     });
 
-    this.#app.use(this.#ipRestriction.restrictToIPAddress);
+    // this.#app.use(this.#ipRestriction.restrictToIPAddress);
     this.#app.use(this.#checkRateLimit);
   };
 

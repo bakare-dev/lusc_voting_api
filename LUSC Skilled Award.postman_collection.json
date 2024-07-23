@@ -1,0 +1,183 @@
+{
+	"info": {
+		"_postman_id": "440676bd-5802-47f9-b373-e7b825a988dc",
+		"name": "LUSC Skilled Award",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25430877"
+	},
+	"item": [
+		{
+			"name": "Vote",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"CategoryId\": 1,\n    \"VoterId\": 3,\n    \"NomineeId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{Election}}/vote"
+			},
+			"response": []
+		},
+		{
+			"name": "Registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"emailAddress\": \"bakare.praise@lmu.edu.ng\",\n    \"matricNo\": \"20CD007562\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{User}}"
+			},
+			"response": []
+		},
+		{
+			"name": "User VALIDATION",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{User}}/validate/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJpYXQiOjE2OTg4NTY5OTEsImV4cCI6MTY5OTAyOTc5MX0.1r4UVEgpyUabGUiJiVdJvB9ygaR_QvXxHZhRWkM7oB8"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{Election}}/categories"
+			},
+			"response": []
+		},
+		{
+			"name": "Get categories nominees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{Election}}/category/nominees/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Get category Result",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{Election}}/vote/category/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Get election result",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{Election}}/result"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Categories",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"categories\": [\n        { \"category\": \"best in school\", \"AssociateId\": 1 }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{Election}}/categories"
+			},
+			"response": []
+		},
+		{
+			"name": "Media Upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/bakare/Downloads/aaa.png"
+						}
+					]
+				},
+				"url": "http://localhost:9010/api/v1/media"
+			},
+			"response": []
+		},
+		{
+			"name": "Add category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"category\": \"best in school\", \n   \"AssociateId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{Election}}/category"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Election",
+			"value": "http://localhost:9010/api/v1/election",
+			"type": "string"
+		},
+		{
+			"key": "User",
+			"value": "http://localhost:9010/api/v1/user",
+			"type": "string"
+		},
+		{
+			"key": "media",
+			"value": "http://localhost:9010/api/v1/media",
+			"type": "string"
+		}
+	]
+}

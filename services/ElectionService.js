@@ -35,9 +35,9 @@ class UserService {
 
     }
 
-    getCategories = async (payload, callback) => {
+    getCategories = async (query, callback) => {
         try {
-            const categories = await this.#categoryService.fetchAll();
+            const categories = await this.#categoryService.fetchAll(query);
 
             callback({status: 200, categories})
         } catch (err) {
@@ -50,7 +50,7 @@ class UserService {
         try {
             const categories = await this.#categoryService.insertBulk(payload);
 
-            callback({status: 200, message: "Categories added successfully"})
+            callback({status: 200, message: "Categories added successfully", data: { categories }})
         } catch (err) {
             this.#logger.error(err);
             callback({status: 500, error: "Internal Server Error"});
@@ -67,7 +67,7 @@ class UserService {
                 return;
             }
 
-            callback({status: 200, message: "Category added"})
+            callback({status: 200, message: "Category added", data: { category }})
         } catch (err) {
             this.#logger.error(err);
             callback({status: 500, error: "Internal Server Error"});
